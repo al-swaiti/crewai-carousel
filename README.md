@@ -30,9 +30,12 @@ This project uses [UV](https://docs.astral.sh/uv/) for fast and reliable depende
 Before running, configure your Gemini API key in the `.env` file.
 
 1.  Rename the `example.env` file to `.env`.
-2.  Add your `GEMINI_API_KEY` to the `.env` file:
+2.  Add your `GEMINI_API_KEY` to the `.env` file. This project defaults to `gemini-2.5-flash` for a fast and cost-effective experience. For the highest quality results, you can change the model to `gemini-2.5-pro`.
+
+**Note on API Costs:** While the Gemini API has a free tier for text generation, this project uses the advanced **Imagen 4** model for high-quality image generation, which is a paid feature available on the Google AI Platform. Please be aware of the associated costs.
     ```
-    MODEL=gemini-1.5-pro-latest
+    # .env file
+    MODEL=gemini-2.5-flash
     GEMINI_API_KEY=YOUR_GOOGLE_AI_API_KEY
     ```
 
