@@ -1,0 +1,10 @@
+__pycache__/
+.DS_Store
+.venv/
+images/
+report.html
+uv.lock
+GEMINI.md
+.env
+.gitignore
+carousel.md
