@@ -74,8 +74,8 @@ The **Visual Designer** is a powerful multi-modal agent responsible for creating
 -   **Core LLM**: Standard Gemini
 -   **Tools Used**:
     -   **`CodeInterpreterTool`**: Gives the agent the ability to write and execute Python code to generate data-driven visualizations (e.g., bar charts, line graphs) using libraries like Matplotlib.
-    -   **`Imagen4Tool`**: A custom tool that connects to Google's Imagen 4 model via the Gemini API, used to generate high-quality, original photos and illustrations.
-    -   **`ScrapeWebsiteTool`**: Pre-configured to scrape the Plotly documentation, allowing the agent to look up examples for creating complex charts.
+    -   **`Imagen4Tool`**: A custom tool that connects to Google's Imagen 4 model. The agent is designed to use **advanced prompting techniques**, creating detailed, descriptive prompts to generate high-quality, contextually relevant photos and illustrations.
+    -   **`ScrapeWebsiteTool`**: Pre-configured to scrape the Plotly documentation. This allows the agent to look up specific examples and syntax to create more advanced and complex visualizations, such as interactive **Plotly charts**, if the task requires it.
 
 ### 3. Content Strategist
 The **Content Strategist** acts as the editor and project manager. It takes the structured research and the generated visuals and weaves them into a coherent narrative.
