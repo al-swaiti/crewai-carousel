@@ -57,3 +57,36 @@ You can easily customize the agents, tasks, and tools to fit your needs:
 -   **Tasks**: Modify `src/carousel/config/tasks.yaml` to set up the workflow and agent assignments.
 -   **Crew Logic**: Modify `src/carousel/crew.py` to add new tools or change the collaboration process.
 -   **Inputs**: Modify `src/carousel/main.py` to change the initial topic or inputs for your crew.
+
+## Agent Breakdown
+
+This project is composed of four specialized AI agents, each with a unique role in the content creation pipeline.
+
+### 1. Researcher
+The **Researcher** agent is the foundation of the crew. Its primary role is to gather, analyze, and structure up-to-date information on a given topic.
+
+-   **Core LLM**: `GeminiWithGoogleSearch`
+-   **Key Capability**: This agent uses the built-in **Google Search grounding** of its LLM. This allows it to perform real-time web searches to ensure the information it provides is current and factual, directly citing its sources.
+
+### 2. Visual Designer
+The **Visual Designer** is a powerful multi-modal agent responsible for creating all the imagery for the presentation. It can generate both data-driven charts and creative illustrations.
+
+-   **Core LLM**: Standard Gemini
+-   **Tools Used**:
+    -   **`CodeInterpreterTool`**: Gives the agent the ability to write and execute Python code to generate data-driven visualizations (e.g., bar charts, line graphs) using libraries like Matplotlib.
+    -   **`Imagen4Tool`**: A custom tool that connects to Google's Imagen 4 model via the Gemini API, used to generate high-quality, original photos and illustrations.
+    -   **`ScrapeWebsiteTool`**: Pre-configured to scrape the Plotly documentation, allowing the agent to look up examples for creating complex charts.
+
+### 3. Content Strategist
+The **Content Strategist** acts as the editor and project manager. It takes the structured research and the generated visuals and weaves them into a coherent narrative.
+
+-   **Core LLM**: Standard Gemini
+-   **Key Capability**: This agent's primary function is reasoning and data organization. It processes the outputs from the previous agents and structures them into a final JSON brief that the HTML Designer can easily parse. It does not require any external tools.
+
+### 4. HTML Designer
+The **HTML Designer** is the final specialist in the pipeline. It takes the structured JSON brief and is responsible for designing and building the final, polished `report.html` file.
+
+-   **Core LLM**: `GeminiWithGoogleSearch`
+-   **Tools Used**:
+    -   **`CodeInterpreterTool`**: This is the agent's most critical tool. After generating the complete HTML and CSS code, it uses this tool to execute a Python script that **writes the code to the `report.html` file**.
+    -   **Google Search Grounding**: The agent uses its search-enabled LLM to look up modern web design trends, find the best CSS libraries, or discover JavaScript libraries for interactive elements.
