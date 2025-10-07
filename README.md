@@ -1,54 +1,56 @@
-# Carousel Crew
+# Carousel Crew 🎠
 
-Welcome to the Carousel Crew project, powered by [crewAI](https://crewai.com). This template is designed to help you set up a multi-agent AI system with ease, leveraging the powerful and flexible framework provided by crewAI. Our goal is to enable your agents to collaborate effectively on complex tasks, maximizing their collective intelligence and capabilities.
+Welcome to Carousel Crew, a project that demonstrates the power of a multi-agent AI system to generate professional, print-ready presentation carousels from a single prompt.
+
+This entire project is powered by a **single API: Google's Gemini**. From deep research and data analysis to generating stunning visuals and designing the final HTML report, every step is handled by specialized AI agents all leveraging the multi-modal capabilities of the Gemini model family.
+
+## The Power of One API
+
+This project showcases how a single, powerful, multi-modal API can handle a complex workflow that traditionally required multiple services:
+
+-   **Deep Research**: The researcher agent uses the built-in search grounding of Gemini for up-to-date, factual information.
+-   **Multi-Modal Visual Generation**: The visual designer agent generates both data-driven charts (via code execution) and creative illustrations (via Imagen) through the Gemini API.
+-   **Content Strategy & Design**: Agents analyze the research and visuals to structure a compelling narrative and then build a professional HTML presentation to display the results.
 
 ## Installation
 
-Ensure you have Python >=3.10 <3.14 installed on your system. This project uses [UV](https://docs.astral.sh/uv/) for dependency management and package handling, offering a seamless setup and execution experience.
+This project uses [UV](https://docs.astral.sh/uv/) for fast and reliable dependency management.
 
-First, if you haven't already, install uv:
+1.  **Install `uv`:**
+    ```bash
+    pip install uv
+    ```
+2.  **Install Dependencies:**
+    ```bash
+    crewai install
+    ```
 
-```bash
-pip install uv
-```
+## Configuration
 
-Next, navigate to your project directory and install the dependencies:
+Before running, configure your Gemini API key in the `.env` file.
 
-(Optional) Lock the dependencies and install them by using the CLI command:
-```bash
-crewai install
-```
-### Customizing
-
-**Add your `OPENAI_API_KEY` into the `.env` file**
-
-- Modify `src/carousel/config/agents.yaml` to define your agents
-- Modify `src/carousel/config/tasks.yaml` to define your tasks
-- Modify `src/carousel/crew.py` to add your own logic, tools and specific args
-- Modify `src/carousel/main.py` to add custom inputs for your agents and tasks
+1.  Rename the `example.env` file to `.env`.
+2.  Add your `GEMINI_API_KEY` to the `.env` file:
+    ```
+    MODEL=gemini-1.5-pro-latest
+    GEMINI_API_KEY=YOUR_GOOGLE_AI_API_KEY
+    ```
 
 ## Running the Project
 
-To kickstart your crew of AI agents and begin task execution, run this from the root folder of your project:
+To generate a new carousel, run the project from the root directory:
 
 ```bash
-$ crewai run
+crewai run
 ```
 
-This command initializes the carousel Crew, assembling the agents and assigning them tasks as defined in your configuration.
+This command will kick off the crew. After a few minutes, you will find a final `report.html` file and an `images/` directory containing all the generated visuals.
 
-This example, unmodified, will run the create a `report.md` file with the output of a research on LLMs in the root folder.
+## Customizing Your Crew
 
-## Understanding Your Crew
+You can easily customize the agents, tasks, and tools to fit your needs:
 
-The carousel Crew is composed of multiple AI agents, each with unique roles, goals, and tools. These agents collaborate on a series of tasks, defined in `config/tasks.yaml`, leveraging their collective skills to achieve complex objectives. The `config/agents.yaml` file outlines the capabilities and configurations of each agent in your crew.
-
-## Support
-
-For support, questions, or feedback regarding the Carousel Crew or crewAI.
-- Visit our [documentation](https://docs.crewai.com)
-- Reach out to us through our [GitHub repository](https://github.com/joaomdmoura/crewai)
-- [Join our Discord](https://discord.com/invite/X4JWnZnxPb)
-- [Chat with our docs](https://chatg.pt/DWjSBZn)
-
-Let's create wonders together with the power and simplicity of crewAI.
+-   **Agents**: Modify `src/carousel/config/agents.yaml` to define your agents' roles and goals.
+-   **Tasks**: Modify `src/carousel/config/tasks.yaml` to set up the workflow and agent assignments.
+-   **Crew Logic**: Modify `src/carousel/crew.py` to add new tools or change the collaboration process.
+-   **Inputs**: Modify `src/carousel/main.py` to change the initial topic or inputs for your crew.
