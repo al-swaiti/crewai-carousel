@@ -1,0 +1,105 @@
+research_task:
+  description: >
+    Conduct thorough research about {topic_content}.
+    
+    Your mission:
+    1. Find {pages_numbers} key insights, developments, or findings
+    2. For EACH insight, include specific supporting data:
+       - Statistics, percentages, or numbers
+       - Recent dates or timeframes
+       - Specific examples or case studies
+    3. Focus on recent developments (last 1-2 years preferred)
+    4. Prioritize actionable, interesting insights over general knowledge
+    
+    Format: For each of the {pages_numbers} points, provide:
+    - A clear, engaging title/headline (10-15 words)
+    - A brief explanation (2-3 sentences)
+    - Supporting data/statistics
+  
+  expected_output: >
+    A clearly structured list of {pages_numbers} research findings.
+    Each finding should have:
+    - title: A compelling headline
+    - description: 2-3 sentence explanation
+    - data: Supporting statistics, numbers, or specific facts
+    
+    Example format:
+    1. AI Models Now Process 10 Trillion Parameters
+       Description: The latest generation of AI models has reached unprecedented scale...
+       Data: GPT-4 uses 1.76 trillion parameters, a 10x increase from 2022 models
+    
+    2. Enterprise AI Adoption Jumps 300% in 2024
+       Description: Businesses are rapidly integrating AI...
+       Data: 67% of Fortune 500 companies now use AI in production (up from 22% in 2023)
+
+visual_design_task:
+  description: >
+    Your mission is a two-part creative process. You must follow this sequence precisely.
+
+    **Part 1: The Cover Page (First Action)**
+    Your absolute first action is to design and generate the main cover image for the report
+    based on the overall `{topic_content}`. You will act as an AI Art Director, creating a
+    stunning, award-winning image that includes the title and subtitle as artistic elements.
+
+    **Part 2: The Content Visuals**
+    Once the cover image is complete, you will then process each of the `{pages_numbers}`
+    research findings from the previous task. For each finding:
+    1.  Analyze the "Visual Suggestion" provided by the researcher.
+    2.  If a visual is needed, use the appropriate tool (Plotly for data, Imagen4 for concepts).
+    3.  If the suggestion is "text-only," create no visual for that point.
+    4.  Save all generated images to the 'images/' directory with descriptive filenames.
+  
+  expected_output: >
+    A JSON object mapping each research finding (and a dedicated "cover_page" key) to its
+    visual file path. If no visual was created for a point, note it.
+    
+    Example:
+    {
+      "cover_page": "images/award_winning_cover.png",
+      "AI Models Now Process 10 Trillion Parameters": "images/ai_parameters_chart.png",
+      "The Rise of AI in Creative Fields": "images/ai_creativity_concept.png",
+      "Ethical Considerations of AI": "No visual created."
+    }
+
+content_structuring_task:
+  description: >
+    Synthesize research and visuals into a print-optimized content specification.
+    
+    **SLIDE 0 (COVER PAGE):** Your first step is to define the final, polished text for the cover page:
+    - Main title: {topic_content}
+    - Subtitle: "Key Insights & Trends" or a more creative alternative
+    - Date: Current date in format "October 2025"
+    
+    **SLIDES 1-{pages_numbers}:** For each carousel slide, create:
+    - Headline (6-10 words, action-oriented, sentence case)
+    - Supporting text (25-40 words maximum, scannable)
+    - Data callout (1-2 key statistics in LARGE format)
+    - Image specification (path + placement guidance)
+    
+    Ensure logical narrative flow: Hook → Build → Resolve
+  expected_output: >
+    A valid JSON object containing two keys: 'cover_page' and 'slides'.
+    - 'cover_page': An object with 'title', 'subtitle', and 'date'.
+    - 'slides': A list of slide objects, each with 'title', 'description', 'data', and 'image_path'.
+    
+    CRITICAL: Output ONLY the JSON object, nothing else.
+
+html_design_task:
+  description: >
+    Your mission is to create a world-class, interactive, and visually stunning HTML report.
+    This is the final step. You must combine all previous inputs into a single, flawless,
+    print-perfect HTML file.
+
+    **Core Requirements:**
+    1.  **Parse the JSON:** Ingest the structured JSON object from the previous task, which contains 'cover_page' and 'slides' keys.
+    2.  **Design a Masterpiece:** Create a cohesive, modern, and professional HTML document.
+        -   **Cover Page:** The cover page is a single, pre-designed image. You MUST embed this image directly as the first slide.
+        -   **Content Slides:** Build one beautiful section for each slide object in the 'slides' list. Each slide must include the title, description, data, and the embedded image.
+    3.  **Add Polish:**
+        -   **Styling:** Use a professional color palette, ample whitespace, and a strong visual hierarchy.
+    **The Final Action:**
+    - After generating the complete HTML and CSS as a single string, you MUST use your tool to write this string to a file named `report.html`. This is your final, critical step.
+
+  expected_output: >
+    The full HTML code for the report, saved into a file named `report.html`.
+    The operation should confirm that the file was written successfully.
