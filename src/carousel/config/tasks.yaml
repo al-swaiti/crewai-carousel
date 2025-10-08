@@ -34,24 +34,25 @@ research_task:
 
 visual_design_task:
   description: >
-    Your mission is a two-part creative process. You must follow this sequence precisely.
+    Act as a Creative Director and a Defensive Coder. Your mission is to create a compelling and concise set of visuals for the report. Not every slide needs an image.
 
-    **Part 1: The Cover Page (First Action)**
+    **Part 1: The Cover Page (Mandatory First Action)**
     Your absolute first action is to design and generate the main cover image for the report
-    based on the overall `{topic_content}`. You will act as an AI Art Director, creating a
-    stunning, award-winning image that includes the title and subtitle as artistic elements.
+    based on the overall `{topic_content}`. Create a stunning, award-winning image with an 
+    aspect ratio of `{aspect_ratio}`.
 
-    **Part 2: The Content Visuals**
-    Once the cover image is complete, you will then process each of the `{pages_numbers}`
-    research findings from the previous task. For each finding:
-    1.  Analyze the "Visual Suggestion" provided by the researcher.
-    2.  If a visual is needed, use the appropriate tool (Plotly for data, Imagen4 for concepts).
-    3.  If the suggestion is "text-only," create no visual for that point.
-    4.  Save all generated images to the 'images/' directory with descriptive filenames.
-  
+    **Part 2: The Content Visuals (Be Selective and Robust)**
+    After the cover is done, review all `{pages_numbers}` research findings. **You will only create visuals for 2-3 of the most impactful findings.**
+
+    When you decide to create a data chart using the Code Interpreter:
+    1.  Write simple, robust, and non-interactive plotting code.
+    2.  **CRITICAL:** Your code MUST save the generated chart to a file (e.g., `plt.savefig('images/chart.png')`).
+    3.  Handle potential errors gracefully.
+
+    Save all generated images to the 'images/' directory with descriptive filenames.
   expected_output: >
     A JSON object mapping each research finding (and a dedicated "cover_page" key) to its
-    visual file path. If no visual was created for a point, note it.
+    visual file path. If no visual was created for a point, the value should be "No visual created."
     
     Example:
     {
@@ -86,20 +87,31 @@ content_structuring_task:
 
 html_design_task:
   description: >
-    Your mission is to create a world-class, interactive, and visually stunning HTML report.
-    This is the final step. You must combine all previous inputs into a single, flawless,
-    print-perfect HTML file.
+    You are a Web Developer. Your task is to take a structured JSON content brief and write the HTML code for a professional report.
 
-    **Core Requirements:**
-    1.  **Parse the JSON:** Ingest the structured JSON object from the previous task, which contains 'cover_page' and 'slides' keys.
-    2.  **Design a Masterpiece:** Create a cohesive, modern, and professional HTML document.
-        -   **Cover Page:** The cover page is a single, pre-designed image. You MUST embed this image directly as the first slide.
-        -   **Content Slides:** Build one beautiful section for each slide object in the 'slides' list. Each slide must include the title, description, data, and the embedded image.
-    3.  **Add Polish:**
-        -   **Styling:** Use a professional color palette, ample whitespace, and a strong visual hierarchy.
-    **The Final Action:**
-    - After generating the complete HTML and CSS as a single string, you MUST use your tool to write this string to a file named `report.html`. This is your final, critical step.
+    **Your Input:** You will receive a JSON object from the previous task. This object contains a `cover_page` and a list of `slides`. Each slide object has an `image_path` key.
 
+    **Your Core Logic:**
+    1.  Parse the JSON input.
+    2.  For the cover page, use the `cover_page.image_path` for the background image.
+    3.  Iterate through the `slides` list. For each slide, you **MUST** take the exact value from the `image_path` key and use it as the `src` attribute for that slide's `<img>` tag.
+        - Example: If `image_path` is `"images/chart.png"`, the HTML must be `<img src="images/chart.png" ...>`.
+        - If `image_path` is `"No visual created."`, you must not include an `<img>` tag for that slide.
+
+    **Styling Requirements (Print-Ready Checklist):**
+    - All CSS must be in a single `<style>` tag in the `<head>`.
+    - Include an `@media print` block to optimize for printing (e.g., `margin: 0;`).
+    - Use `page-break-inside: avoid;` on slide containers to prevent them from splitting across pages.
+
+    **Final Action:**
+    Your final and most important action is to take the complete HTML string you have generated and use the `write_file` tool to save it as `report.html`.
   expected_output: >
-    The full HTML code for the report, saved into a file named `report.html`.
-    The operation should confirm that the file was written successfully.
+    A confirmation message from the `write_file` tool indicating that `report.html` was successfully created. For example: "File report.html written successfully."
+
+pdf_conversion_task:
+  description: >
+    Take the 'report.html' file generated by the previous step and convert it into a
+    professional, print-ready PDF document named 'report.pdf', ensuring the output
+    matches the original `{aspect_ratio}`.
+  expected_output: >
+    A confirmation message indicating the successful creation of 'report.pdf'.

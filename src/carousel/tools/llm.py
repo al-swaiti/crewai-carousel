@@ -2,45 +2,42 @@ from typing import Any, List, Dict, Union
 from crewai import LLM
 import os
 
-GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
-
 class GeminiWithGoogleSearch(LLM):
     """
-    Custom Gemini LLM using Google AI Studio (NOT Vertex) with Google Search grounding.
-    - Injects the 'googleSearch' tool each call
-    - Enables LiteLLM's web_search_options so search actually runs
-    Requires: os.environ['GEMINI_API_KEY'] or pass api_key=...
+    Custom Gemini LLM that automatically enables Google Search grounding.
+    - Injects the 'googleSearch' tool into every call if not present.
+    - Configured via environment variables: MODEL and GEMINI_API_KEY.
     """
+    _google_search_tool = {"googleSearch": {}}
 
-    def __init__(self, model: str | None = None, api_key: str | None = None, **kwargs):
-        model = model or os.getenv("MODEL", "gemini/gemini-1.5-pro-latest")
-        api_key = GEMINI_API_KEY
+    def __init__(self, auto_inject_search: bool = True, **kwargs):
+        # Simplified to only use environment variables for configuration.
+        model = os.getenv("MODEL")
+        api_key = os.getenv("GEMINI_API_KEY")
+
+        if not model:
+            raise ValueError("Missing MODEL environment variable. Please set it in your .env file.")
         if not api_key:
             raise ValueError("Missing GEMINI_API_KEY. Set the env var or pass api_key=...")
 
+        # New feature: Makes the search injection optional.
+        self.auto_inject_search = auto_inject_search
         super().__init__(model=model, api_key=api_key, **kwargs)
 
     def call(
         self,
         messages: Union[str, List[Dict[str, str]]],
         tools: List[Dict] | None = None,
-        callbacks: List[Any] | None = None,
-        available_functions: Dict[str, Any] | None = None,
         **kwargs,
     ) -> Union[str, Any]:
-        # Inject Gemini's search tool in camelCase
-        _tools: List[Dict] = list(tools) if tools else []
-        has_google_search = any(
-            isinstance(t, dict) and ("googleSearch" in t or "google_search" in t)
-            for t in _tools
-        )
-        if not has_google_search:
-            _tools.insert(0, {"googleSearch": {}})
+        
+        # If search injection is disabled, just make the call directly.
+        if not self.auto_inject_search:
+            return super().call(messages=messages, tools=tools, **kwargs)
 
-        return super().call(
-            messages=messages,
-            tools=_tools,
-            callbacks=callbacks,
-            available_functions=available_functions,
-            **kwargs,
-        )
+        # More efficient and direct way to handle the tool list.
+        _tools = list(tools) if tools else []
+        if self._google_search_tool not in _tools:
+            _tools.insert(0, self._google_search_tool)
+
+        return super().call(messages=messages, tools=_tools, **kwargs)

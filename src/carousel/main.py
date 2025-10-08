@@ -18,7 +18,7 @@ def run():
     Run the crew.
     """
     inputs = {
-        'topic_content': 'AI LLMs',
+        'topic_content': 'siberian tiger',
         'pages_numbers': 5,
         'aspect_ratio': '16:9' # Options: '16:9' (landscape), '9:16' (portrait), '1:1' (square)
     }

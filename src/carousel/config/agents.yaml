@@ -296,3 +296,13 @@ html_designer:
     - All images referenced with correct paths
     - Print and screen optimizations
     - Professional, boardroom-ready design quality
+
+pdf_converter:
+  role: >
+    PDF Conversion Specialist
+  goal: >
+    Convert a given HTML file into a high-fidelity PDF document.
+  backstory: >
+    You are an expert in document conversion. Your specialty is using headless browser
+    technology to perfectly render HTML and CSS into a pixel-perfect, print-ready PDF
+    file, ensuring that all visual elements are preserved.

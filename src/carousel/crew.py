@@ -3,6 +3,8 @@ from crewai.project import CrewBase, agent, crew, task
 from crewai_tools import CodeInterpreterTool, ScrapeWebsiteTool, FileWriterTool
 from carousel.tools.imagen_tool import Imagen4Tool
 from carousel.tools.llm import GeminiWithGoogleSearch
+from carousel.tools.pdf_tool import PDFConversionTool
+import os
 
 # Instantiate the custom LLM for agents that need web search
 grounded_llm = GeminiWithGoogleSearch()
@@ -49,8 +51,16 @@ class Carousel():
     def html_designer(self) -> Agent:
         return Agent(
             config=self.agents_config['html_designer'],
+            tools=[FileWriterTool()],
             llm=grounded_llm,
-            tools=[CodeInterpreterTool()],
+            verbose=True
+        )
+
+    @agent
+    def pdf_converter(self) -> Agent:
+        return Agent(
+            config=self.agents_config['pdf_converter'],
+            tools=[PDFConversionTool()],
             verbose=True
         )
 
@@ -82,7 +92,17 @@ class Carousel():
         return Task(
             config=self.tasks_config['html_design_task'],
             context=[self.content_structuring_task()],
-            agent=self.html_designer()
+            agent=self.html_designer(),
+            output_file='report.html'
+        )
+
+    @task
+    def pdf_conversion_task(self) -> Task:
+        return Task(
+            config=self.tasks_config['pdf_conversion_task'],
+            context=[self.html_design_task()],
+            agent=self.pdf_converter(),
+            output_file='report.pdf'
         )
 
     @crew
@@ -93,4 +113,13 @@ class Carousel():
             tasks=self.tasks,
             process=Process.sequential,
             verbose=True,
+            memory=False,
+            embedder={
+                "provider": "google-generativeai",
+                "config": {
+                    "model": "models/text-embedding-004",
+                    "api_key": os.environ.get("GEMINI_API_KEY"),
+                },
+            },
+            
         )
