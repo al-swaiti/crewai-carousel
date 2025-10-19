@@ -12,11 +12,19 @@ warnings.filterwarnings("ignore", category=SyntaxWarning, module="pysbd")
 # crew locally, so refrain from adding unnecessary logic into this file.
 # Replace with inputs you want to test with, it will automatically
 # interpolate any tasks and agents information
+# main.py or run.py
+import os
+
+
+
+    
 
 def run():
     """
     Run the crew.
     """
+    os.makedirs('images', exist_ok=True)
+    print("✅ Created images/ directory")
     inputs = {
         'topic_content': 'siberian tiger',
         'pages_numbers': 5,

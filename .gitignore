@@ -1,10 +1,40 @@
-__pycache__/
-.DS_Store
-.venv/
-images/
-report.html
-uv.lock
-GEMINI.md
+# Environment variables
 .env
-.gitignore
-carousel.md
+
+# Python virtual environment
+.venv/
+venv/
+env/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# IDE and editor directories
+.vscode/
+.idea/
+
+# Build and distribution artifacts
+build/
+dist/
+*.egg-info/
+
+# Logs and generated reports
+report.log
+report.html
+report.pdf
+siberian_tiger_report.html
+siberian_tiger_report.pdf
+*.log
+
+# Node.js dependencies
+node_modules/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Generated images (optional, but good practice for a clean repo)
+images/

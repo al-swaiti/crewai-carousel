@@ -1,117 +1,409 @@
 research_task:
   description: >
-    Conduct thorough research about {topic_content}.
+    Conduct deep, investigative research about {topic_content} to uncover
+    the most compelling narratives backed by hard data.
     
-    Your mission:
-    1. Find {pages_numbers} key insights, developments, or findings
-    2. For EACH insight, include specific supporting data:
-       - Statistics, percentages, or numbers
+    **YOUR MISSION:**
+    Find {pages_numbers} key insights that are:
+    - Surprising or counter-intuitive (not common knowledge)
+    - Recent (prioritize last 12-24 months)
+    - Data-backed (specific numbers, dates, sources)
+    - Visually potent (can be shown, not just told)
+    
+    **FOR EACH INSIGHT:**
+    1. **The Hook** - A compelling title (10-15 words) that makes someone want to know more
+    2. **The Story** - A clear explanation (2-3 sentences) of why this matters
+    3. **The Evidence** - Specific supporting data:
+       - Concrete statistics or percentages
        - Recent dates or timeframes
        - Specific examples or case studies
-    3. Focus on recent developments (last 1-2 years preferred)
-    4. Prioritize actionable, interesting insights over general knowledge
+       - Source credibility indicators
     
-    Format: For each of the {pages_numbers} points, provide:
-    - A clear, engaging title/headline (10-15 words)
-    - A brief explanation (2-3 sentences)
-    - Supporting data/statistics
-  
+    **RESEARCH STRATEGY:**
+    - Look for inflection points, not just trends
+    - Find the human story behind the numbers
+    - Identify patterns that reveal larger truths
+    - Consider what would make great visual storytelling
+    
+    **VISUAL THINKING:**
+    As you research, mentally tag each insight:
+    - "Chart-worthy" (has time series, comparisons, or distributions)
+    - "Concept-worthy" (big idea that needs metaphorical illustration)
+    - "Text-powerful" (data point so striking it needs no visual)
+    
   expected_output: >
-    A clearly structured list of {pages_numbers} research findings.
-    Each finding should have:
-    - title: A compelling headline
-    - description: 2-3 sentence explanation
-    - data: Supporting statistics, numbers, or specific facts
+    A Python list of exactly {pages_numbers} dictionaries, each with three keys:
+    'title', 'description', and 'data'.
     
     Example format:
-    1. AI Models Now Process 10 Trillion Parameters
-       Description: The latest generation of AI models has reached unprecedented scale...
-       Data: GPT-4 uses 1.76 trillion parameters, a 10x increase from 2022 models
+    ```python
+    [
+      {
+        "title": "Siberian Tiger Population Rebounds 82% Since Conservation Intensified",
+        "description": "Coordinated anti-poaching efforts and habitat protection across Russia, China, and North Korea have led to the most significant recovery of an apex predator in modern conservation history. The population has nearly doubled in just 15 years.",
+        "data": "From 330 individuals in 2005 to approximately 600 in 2024, with breeding pairs now established in previously abandoned territories across the Russian Far East."
+      },
+      {
+        "title": "Genetic Bottleneck Threatens Long-term Viability Despite Population Growth",
+        "description": "While numbers are rising, DNA analysis reveals critically low genetic diversity stemming from the near-extinction event of the 1940s. This hidden crisis could undermine the species' ability to adapt to climate change and disease.",
+        "data": "Over 93% of the current population descends from fewer than 15 founding individuals, resulting in genetic diversity lower than domestic cats. Inbreeding coefficients reach 0.25 in some populations."
+      }
+    ]
+    ```
     
-    2. Enterprise AI Adoption Jumps 300% in 2024
-       Description: Businesses are rapidly integrating AI...
-       Data: 67% of Fortune 500 companies now use AI in production (up from 22% in 2023)
+    **CRITICAL:** Output must be valid Python list format, parseable by the next agent.
 
 visual_design_task:
   description: >
-    Act as a Creative Director and a Defensive Coder. Your mission is to create a compelling and concise set of visuals for the report. Not every slide needs an image.
+    You are a Creative Director with complete artistic freedom and access to
+    cutting-edge visual tools. Your mission: create a visual identity for this
+    report that ranges from a stunning cover to strategically chosen content visuals.
 
-    **Part 1: The Cover Page (Mandatory First Action)**
-    Your absolute first action is to design and generate the main cover image for the report
-    based on the overall `{topic_content}`. Create a stunning, award-winning image with an 
-    aspect ratio of `{aspect_ratio}`.
+    **YOUR INPUTS:**
+    - Topic: {topic_content}
+    - Research findings: {pages_numbers} insights (passed from research_task)
+    - Target aspect ratio: {aspect_ratio}
 
-    **Part 2: The Content Visuals (Be Selective and Robust)**
-    After the cover is done, review all `{pages_numbers}` research findings. **You will only create visuals for 2-3 of the most impactful findings.**
-
-    When you decide to create a data chart using the Code Interpreter:
-    1.  Write simple, robust, and non-interactive plotting code.
-    2.  **CRITICAL:** Your code MUST save the generated chart to a file (e.g., `plt.savefig('images/chart.png')`).
-    3.  Handle potential errors gracefully.
-
-    Save all generated images to the 'images/' directory with descriptive filenames.
-  expected_output: >
-    A JSON object mapping each research finding (and a dedicated "cover_page" key) to its
-    visual file path. If no visual was created for a point, the value should be "No visual created."
+    **PHASE 1: THE COVER IMAGE (Always Required)**
+    Create an evocative, high-concept cover that captures the essence of {topic_content}.
+    This is not a chart—it's a piece of art that sets the tone for everything that follows.
     
-    Example:
+    **Execution:**
+    - Tool: Imagen4Tool
+    - Prompt: Write a detailed, evocative prompt (2-3 sentences) that captures the
+      emotional and conceptual core of the topic. Think National Geographic cover quality.
+    - Parameters: aspectRatio='{aspect_ratio}', imageSize='2K', numberofImages=1
+    - Naming: Save as images/cover_[descriptive_topic_name].png
+    
+    Example prompt for Siberian Tiger:
+    "A majestic Siberian tiger emerging from snow-covered taiga forest at dawn, backlit
+    by golden light filtering through frost-covered pines. Cinematic composition with
+    shallow depth of field, emphasizing the tiger's piercing gaze and powerful presence.
+    National Geographic photography style, ultra-detailed fur texture, dramatic lighting."
+
+    **PHASE 2: CONTENT VISUALS (Editorial Decision-Making)**
+    Review each of the {pages_numbers} research findings. For each one, make a
+    deliberate editorial decision using this framework:
+
+    **DECISION TREE:**
+    
+    1. **Does this finding have rich, visualizable data?**
+       → YES: Consider creating a Plotly chart
+       → NO: Go to question 2
+    
+    2. **Does this finding represent a big concept or emotion?**
+       → YES: Consider creating an Imagen4 illustration
+       → NO: Go to question 3
+    
+    3. **Is the data point itself so striking it needs no visual support?**
+       → YES: Mark as "No visual created" (let the text be the hero)
+       → NO: Reconsider question 1 or 2 with fresh eyes
+
+    **WORKFLOW FOR PLOTLY CHARTS:**
+
+    **Step 1: Research the Chart Type**
+    Use ScrapeWebsiteTool to explore Plotly documentation for the ideal chart type:
+    - Time series → Search: "plotly line charts time series"
+    - Comparisons → Search: "plotly bar charts grouped"
+    - Proportions → Search: "plotly pie charts donut"
+    - Distributions → Search: "plotly histograms box plots"
+    - Relationships → Search: "plotly scatter plots bubble"
+    - Complex data → Search: "plotly heatmaps"
+
+    **Step 2: Study Examples**
+    From the scraped documentation, understand:
+    - Data structure requirements
+    - Available styling options
+    - Best practices for this chart type
+
+    **Step 3: Create with CodeInterpreterTool**
+
+    **⚠️ CRITICAL RULES:**
+    - The images/ directory ALREADY EXISTS from main.py
+    - DO NOT use `import os` or `os.makedirs()` 
+    - DO NOT use any file system operations
+    - Save directly to images/ path
+
+    **Publication-Quality Plotly Template:**
+    ```python
+    import plotly.graph_objects as go
+    # Alternative: import plotly.express as px
+    
+    # 1. Define your data
+    x_data = ['2010', '2015', '2020', '2024']
+    y_data = [330, 450, 540, 600]
+    
+    # 2. Create figure with professional styling
+    fig = go.Figure(data=[
+        go.Scatter(
+            x=x_data, 
+            y=y_data,
+            mode='lines+markers',
+            line=dict(color='#2563eb', width=4),
+            marker=dict(size=12, color='#2563eb')
+        )
+    ])
+    
+    # 3. Professional layout
+    fig.update_layout(
+        title=dict(
+            text='Siberian Tiger Population Recovery',
+            x=0.5,
+            xanchor='center',
+            font=dict(size=28, family='Arial, sans-serif', color='#1a1a1a')
+        ),
+        xaxis=dict(
+            title='Year',
+            titlefont=dict(size=18),
+            showgrid=True,
+            gridcolor='#E5E5E5',
+            showline=True,
+            linewidth=2,
+            linecolor='#333'
+        ),
+        yaxis=dict(
+            title='Population Count',
+            titlefont=dict(size=18),
+            showgrid=True,
+            gridcolor='#E5E5E5',
+            showline=True,
+            linewidth=2,
+            linecolor='#333'
+        ),
+        font=dict(size=16, family='Arial, sans-serif', color='#1a1a1a'),
+        plot_bgcolor='white',
+        paper_bgcolor='white',
+        height=1080,
+        width=1920,
+        margin=dict(l=100, r=100, t=120, b=100)
+    )
+    
+    # 4. Save (images/ already exists)
+    output_path = 'images/chart_population_recovery.png'
+    fig.write_image(output_path, width=1920, height=1080, scale=2)
+    print(f'✅ Chart saved: output_path')
+    ```
+
+    **PLOTLY CHART TYPE QUICK REFERENCE:**
+    - Trends over time: `go.Scatter(mode='lines')` or `px.line()`
+    - Category comparison: `go.Bar()` or `px.bar()`
+    - Part-to-whole: `go.Pie()` or `px.pie()`
+    - Distribution: `go.Histogram()` or `px.histogram()`
+    - Correlation: `go.Scatter(mode='markers')` or `px.scatter()`
+    - Heatmap: `go.Heatmap()` or `px.imshow()`
+
+    **WORKFLOW FOR IMAGEN4 ILLUSTRATIONS:**
+    For conceptual findings that need visual metaphor:
+    - Tool: Imagen4Tool
+    - Prompt: Write a detailed, artistic prompt (2-3 sentences)
+    - Parameters: aspectRatio='{aspect_ratio}', imageSize='1K'
+    - Naming: images/concept_[descriptive_name].png
+
+    **YOUR CREATIVE FREEDOM:**
+    - You might create 2 visuals (text-heavy content)
+    - You might create 5 visuals (data-rich content)
+    - You might mix 2 charts + 1 illustration + 2 text-only
+    - Quality > Quantity always
+
+    **VERIFICATION STEP:**
+    After creating each visual, verify the file was actually created successfully
+    by checking for the success message in the tool output.
+
+  expected_output: >
+    A JSON object that maps ALL findings (by exact title) to their visual assets.
+    This map is CRITICAL for the content_strategist.
+    
+    **Structure:**
+    - One "cover_page" key with the cover image path
+    - One key for EACH of the {pages_numbers} research finding titles
+    - Values are either: a file path OR the exact string "No visual created."
+    
+    **Example:**
+    ```json
     {
-      "cover_page": "images/award_winning_cover.png",
-      "AI Models Now Process 10 Trillion Parameters": "images/ai_parameters_chart.png",
-      "The Rise of AI in Creative Fields": "images/ai_creativity_concept.png",
-      "Ethical Considerations of AI": "No visual created."
+      "cover_page": "images/cover_siberian_tiger_taiga.png",
+      "Siberian Tiger Population Rebounds 82% Since Conservation Intensified": "images/chart_population_growth.png",
+      "Genetic Bottleneck Threatens Long-term Viability Despite Population Growth": "No visual created.",
+      "Human-Tiger Conflict Incidents Triple in Border Regions": "images/chart_conflict_heatmap.png",
+      "Cross-Border Cooperation Creates Wildlife Corridors": "images/concept_wildlife_corridor.png",
+      "Climate Change Disrupts Prey Migration Patterns": "images/chart_prey_availability.png"
     }
+    ```
+    
+    **CRITICAL RULES:**
+    - Must include ALL {pages_numbers} findings
+    - Use EXACT finding titles as keys (character-perfect matching required)
+    - Include cover_page key
+    - Output ONLY the JSON object, no additional text
 
 content_structuring_task:
   description: >
-    Synthesize research and visuals into a print-optimized content specification.
+    You are a Content Architect. Your mission is to synthesize research findings
+    and the visual map into a final, structured JSON specification that the HTML
+    designer can directly translate into a beautiful report.
+
+    **YOUR INPUTS:**
+    1. {pages_numbers} research findings (from researcher)
+    2. A JSON visual map with {pages_numbers} + 1 entries (from visual designer)
+
+    **YOUR TASK:**
+    Create a comprehensive content specification with two main sections:
+
+    **SECTION 1: COVER PAGE**
+    Design an impactful cover that includes:
+    - Title: {topic_content} (the main topic)
+    - Subtitle: "Key Insights & Trends" (or craft a better one)
+    - Date: Current month and year (e.g., "October 2025")
+    - Image: Extract path from visual_map["cover_page"]
+
+    **SECTION 2: CONTENT SLIDES**
+    For EACH of the {pages_numbers} research findings, create a slide object by:
     
-    **SLIDE 0 (COVER PAGE):** Your first step is to define the final, polished text for the cover page:
-    - Main title: {topic_content}
-    - Subtitle: "Key Insights & Trends" or a more creative alternative
-    - Date: Current date in format "October 2025"
+    1. **Matching Logic:**
+       - Take the finding's exact title
+       - Look up this title in the visual map (as a key)
+       - Extract the corresponding image_path value
+       - If value is "No visual created.", preserve this exactly
+       - If value is a file path, use it exactly as provided
     
-    **SLIDES 1-{pages_numbers}:** For each carousel slide, create:
-    - Headline (6-10 words, action-oriented, sentence case)
-    - Supporting text (25-40 words maximum, scannable)
-    - Data callout (1-2 key statistics in LARGE format)
-    - Image specification (path + placement guidance)
+    2. **Layout Assignment:**
+       Based on what the slide contains, assign a layout_template:
+       - **data-hero**: Has image_path (not "No visual created.") + has data
+       - **visual-focus**: Has image_path + data is minimal/generic
+       - **stat-hero**: No image (image_path is "No visual created.") + has strong data
+       - **text-focus**: No image + data is minimal
     
-    Ensure logical narrative flow: Hook → Build → Resolve
+    3. **Visual Weight:**
+       Assign visual_weight to guide the HTML designer:
+       - **high**: Striking chart or illustration that should dominate
+       - **medium**: Supporting visual that complements text
+       - **low**: Text-driven with minimal or no visual
+
+    **PACING STRATEGY:**
+    Arrange slides to create narrative flow:
+    - Lead with a high visual_weight slide (hook the reader)
+    - Alternate between visual and text-heavy slides
+    - Place the most impactful visual at 60-70% through
+    - Can end with text-focus for reflective conclusion
+
   expected_output: >
-    A valid JSON object containing two keys: 'cover_page' and 'slides'.
-    - 'cover_page': An object with 'title', 'subtitle', and 'date'.
-    - 'slides': A list of slide objects, each with 'title', 'description', 'data', and 'image_path'.
+    A single, valid JSON object with 'cover_page' and 'slides' keys.
+    The slides array must contain exactly {pages_numbers} objects.
     
-    CRITICAL: Output ONLY the JSON object, nothing else.
+    **Schema:**
+    ```json
+    {
+      "cover_page": {
+        "title": "{topic_content}",
+        "subtitle": "Key Insights & Trends",
+        "date": "October 2025",
+        "image_path": "images/cover_*.png"
+      },
+      "slides": [
+        {
+          "title": "[Exact finding title from research]",
+          "description": "[Finding description]",
+          "data": "[Finding data/statistics]",
+          "image_path": "images/*.png" OR "No visual created.",
+          "layout_template": "data-hero" | "visual-focus" | "stat-hero" | "text-focus",
+          "visual_weight": "high" | "medium" | "low"
+        }
+        // ... exactly {pages_numbers} slides total
+      ]
+    }
+    ```
+    
+    **VALIDATION CHECKLIST:**
+    ✓ Cover page has all 4 required fields
+    ✓ Exactly {pages_numbers} slides in array
+    ✓ Every slide has all 6 required fields
+    ✓ All image_path values match visual map exactly
+    ✓ All layout_template values are one of the 4 valid options
+    ✓ All visual_weight values are: high, medium, or low
+    ✓ Valid JSON syntax (no trailing commas, proper quotes)
+    
+    **OUTPUT:** Return ONLY the JSON object. No markdown formatting, no explanation text.
 
 html_design_task:
   description: >
-    You are a Web Developer. Your task is to take a structured JSON content brief and write the HTML code for a professional report.
+    You are an Elite Visual Data Architect from a world-class design agency.
+    Your mission is to transform a structured JSON content specification into a
+    breathtaking, print-ready, and self-contained HTML file named 'report.html'.
+    The design must be modern, elegant, and thematically inspired by the topic: **{topic_content}**.
 
-    **Your Input:** You will receive a JSON object from the previous task. This object contains a `cover_page` and a list of `slides`. Each slide object has an `image_path` key.
+    **YOUR CANVAS:** A single HTML file. All CSS and any minor JavaScript
+    must be embedded within this file.
 
-    **Your Core Logic:**
-    1.  Parse the JSON input.
-    2.  For the cover page, use the `cover_page.image_path` for the background image.
-    3.  Iterate through the `slides` list. For each slide, you **MUST** take the exact value from the `image_path` key and use it as the `src` attribute for that slide's `<img>` tag.
-        - Example: If `image_path` is `"images/chart.png"`, the HTML must be `<img src="images/chart.png" ...>`.
-        - If `image_path` is `"No visual created."`, you must not include an `<img>` tag for that slide.
+    **MODERN CSS (2025 LIVING STANDARD):**
+    -   **OKLCH Colors:** Use `oklch()` for perceptually uniform, vibrant, and human-readable colors.
+    -   **CSS Nesting:** Write clean, maintainable CSS directly inside parent selectors.
+    -   **Dynamic Colors:** Use `color-mix()` to create harmonious tints and shades.
+    -   **Scroll-Driven Animations:** Implement effects like parallax backgrounds without JavaScript.
+    -   **Animate to Auto:** Use `transition: height 0.5s; transition-behavior: allow-discrete;` for smooth accordions.
+    -   **Automatic Dark Mode:** Use `prefers-color-scheme` to create a stunning dark theme.
 
-    **Styling Requirements (Print-Ready Checklist):**
-    - All CSS must be in a single `<style>` tag in the `<head>`.
-    - Include an `@media print` block to optimize for printing (e.g., `margin: 0;`).
-    - Use `page-break-inside: avoid;` on slide containers to prevent them from splitting across pages.
+    **ADAPTIVE LAYOUTS (YOUR CREATIVE INTERPRETATION):**
+    -   **`data-hero`**: A balanced grid layout where a chart and key stats are side-by-side.
+    -   **`visual-focus`**: A full-bleed image background with a `backdrop-filter: blur()` glassmorphism overlay for text.
+    -   **`stat-hero`**: A giant, impactful number with a kinetic gradient text effect.
+    -   **`text-focus`**: An elegant, editorial layout with beautiful typography.
 
-    **Final Action:**
-    Your final and most important action is to take the complete HTML string you have generated and use the `write_file` tool to save it as `report.html`.
+    **PRINT PERFECTION (MANDATORY CHECKLIST):**
+    -   Include `@page { size: A4 landscape; margin: 0; }`.
+    -   Use `-webkit-print-color-adjust: exact;` to ensure backgrounds print.
+    -   Apply `page-break-after: always;` to each `.slide` section.
+    -   Use CMYK-safe colors (e.g., `oklch(95% 0.01 240)` instead of pure white).
+    -   Ensure minimum font sizes (e.g., 12pt body, 28pt headlines).
+
+    **VISUAL EFFECTS INSPIRATION:**
+    -   **Kinetic Gradient Text:** Animate the background position of a gradient clipped to text.
+    -   **Glassmorphism:** Use `background: oklch(98% 0.01 240 / 0.6); backdrop-filter: blur(12px);`.
+    -   **Scroll-Triggered Reveals:** Use `@scroll-timeline` to fade in elements as they enter the viewport.
+
+    **FINAL ACTION:**
+    After crafting the complete HTML as a single string, you MUST use the
+    `FileWriterTool` to save this string to a file named `report.html`.
+
   expected_output: >
-    A confirmation message from the `write_file` tool indicating that `report.html` was successfully created. For example: "File report.html written successfully."
+    A string containing ONLY the filename of the successfully created HTML file.
+    Example: "report.html"
 
 pdf_conversion_task:
   description: >
-    Take the 'report.html' file generated by the previous step and convert it into a
-    professional, print-ready PDF document named 'report.pdf', ensuring the output
-    matches the original `{aspect_ratio}`.
+    You are a PDF Conversion Specialist. Convert 'report.html' to 'report.pdf' by 
+    uploading the HTML file AND all associated image files to the conversion API.
+
+    **Your Inputs:**
+    - HTML file: 'report.html' (in current directory)
+    - Image files: All files in the 'images/' directory (*.png, *.jpg, *.svg)
+    - Aspect ratio: {aspect_ratio}
+
+    **Critical Understanding:**
+    The PDF conversion API endpoint is:
+    POST https://abdallalswaiti-htmlpdfs.hf.space/convert
+    
+    It requires:
+    - html_file: The report.html file
+    - images: ALL image files referenced in the HTML (multiple files)
+    - aspect_ratio: {aspect_ratio} (optional, can auto-detect)
+
+    **Your Task:**
+    1. List all files in the 'images/' directory
+    2. Use PDFConversionTool with:
+       - html_file_path: 'report.html'
+       - image_paths: List of all image file paths (e.g., ['images/cover_topic.png', 'images/chart_data.png'])
+       - aspect_ratio: {aspect_ratio}
+    3. The tool will upload HTML + all images together
+    4. Save the returned PDF as 'report.pdf'
+
+    **Why This Matters:**
+    Your API saves images to the same temp directory as the HTML file, so the 
+    HTML's relative paths (e.g., <img src="images/photo.png">) resolve correctly 
+    during Puppeteer rendering.
+
   expected_output: >
-    A confirmation message indicating the successful creation of 'report.pdf'.
+    Confirmation message: "✅ Successfully converted to PDF: report.pdf"
+    Include file size and number of images processed.
+  agent: pdf_converter
+  context:
+    - html_design_task

@@ -6,13 +6,8 @@ from carousel.tools.llm import GeminiWithGoogleSearch
 from carousel.tools.pdf_tool import PDFConversionTool
 import os
 
-# Instantiate the custom LLM for agents that need web search
 grounded_llm = GeminiWithGoogleSearch()
-
-# Instantiate the Plotly documentation scraping tool
-plotly_scraper = ScrapeWebsiteTool(
-    website_url="https://plotly.com/python/"
-)
+plotly_scraper = ScrapeWebsiteTool(website_url="https://plotly.com/python/")
 
 @CrewBase
 class Carousel():
@@ -28,18 +23,21 @@ class Carousel():
             verbose=True
         )
 
+
+    
     @agent
     def visual_designer(self) -> Agent:
         return Agent(
             config=self.agents_config['visual_designer'],
             tools=[
-                CodeInterpreterTool(), 
-                Imagen4Tool(),
-                plotly_scraper
+                CodeInterpreterTool(),  # For executing Plotly code
+                Imagen4Tool(),          # For conceptual images
+                ScrapeWebsiteTool(website_url="https://plotly.com/python/")  # Plotly docs
             ],
             verbose=True
         )
-
+    
+    
     @agent
     def content_strategist(self) -> Agent:
         return Agent(
@@ -68,7 +66,8 @@ class Carousel():
     def research_task(self) -> Task:
         return Task(
             config=self.tasks_config['research_task'],
-            agent=self.researcher()
+            agent=self.researcher(),
+            human_input=True  # ✅ Add human review after research
         )
 
     @task
@@ -93,7 +92,7 @@ class Carousel():
             config=self.tasks_config['html_design_task'],
             context=[self.content_structuring_task()],
             agent=self.html_designer(),
-            output_file='report.html'
+            human_input=True
         )
 
     @task
@@ -101,17 +100,16 @@ class Carousel():
         return Task(
             config=self.tasks_config['pdf_conversion_task'],
             context=[self.html_design_task()],
-            agent=self.pdf_converter(),
-            output_file='report.pdf'
+            agent=self.pdf_converter()
         )
 
     @crew
     def crew(self) -> Crew:
         """Creates the Carousel crew"""
         return Crew(
-            agents=self.agents,
-            tasks=self.tasks,
-            process=Process.sequential,
+            agents=self.agents,  # All agents
+            tasks=self.tasks,    # All tasks in order
+            process=Process.sequential,  # ✅ Sequential execution
             verbose=True,
             memory=False,
             embedder={
@@ -121,5 +119,4 @@ class Carousel():
                     "api_key": os.environ.get("GEMINI_API_KEY"),
                 },
             },
-            
         )
