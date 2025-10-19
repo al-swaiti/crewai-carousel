@@ -56,9 +56,8 @@ This project uses [UV](https://docs.astral.sh/uv/) for dependency management.
 
     ```
     # .env file
-    MODEL=gemini-1.5-pro-latest
+    MODEL=gemini-2.5-flash
     GEMINI_API_KEY=YOUR_GOOGLE_AI_API_KEY
-    SERPER_API_KEY=YOUR_SERPER_API_KEY
     ```
 
 ### Running the Project
