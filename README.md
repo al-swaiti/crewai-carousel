@@ -53,13 +53,12 @@ This project uses [UV](https://docs.astral.sh/uv/) for dependency management.
 ### Configuration
 
 1.  Rename `example.env` to `.env`.
-2.  Add your API keys to the `.env` file. This project requires keys for Google Gemini and Serper (for search).
+2.  Add your Gemini key to the `.env` file. Carousel currently targets the Gemini 2.5 Flash model exclusively.
 
     ```
     # .env file
-    MODEL=gemini-1.5-pro-latest
-    GEMINI_API_KEY=YOUR_GOOGLE_AI_API_KEY
-    SERPER_API_KEY=YOUR_SERPER_API_KEY
+    MODEL=gemini/gemini-2.5-flash
+    GEMINI_API_KEY=YOUR_GEMINI_FLASH_API_KEY
     ```
 
 ### Running the Project
