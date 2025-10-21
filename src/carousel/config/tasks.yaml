@@ -2,6 +2,8 @@ research_task:
   description: >
     Conduct deep, investigative research about {topic_content} to uncover
     the most compelling narratives backed by hard data.
+    Tailor every finding for **{audience_persona}**, choosing context, terminology,
+    and proof points that will resonate with that audience.
     
     **YOUR MISSION:**
     Find {pages_numbers} key insights that are:
@@ -58,15 +60,29 @@ visual_design_task:
     You are a Creative Director with complete artistic freedom and access to
     cutting-edge visual tools. Your mission: create a visual identity for this
     report that ranges from a stunning cover to strategically chosen content visuals.
+    Every aesthetic decision must reflect the expectations and tastes of **{audience_persona}**.
 
     **YOUR INPUTS:**
     - Topic: {topic_content}
     - Research findings: {pages_numbers} insights (passed from research_task)
     - Target aspect ratio: {aspect_ratio}
+    - Audience persona: {audience_persona}
+
+    **PHASE 0: USER-PROVIDED IMAGES (Human Input Step)**
+    Before generating any images, you MUST ask the user if they want to provide a
+    custom cover image or images for any of the specific research findings.
+    
+    Example question to ask the user:
+    "I am ready to start creating the visuals. Would you like to provide a local path for a custom cover image? You can also provide paths for images to go with any of these research findings: [List of research finding titles]. If so, please provide the full local paths. Otherwise, I will generate them."
+    
+    If the user provides local paths, you MUST use your CodeInterpreterTool to
+    write a Python script that copies these files into the project's `images/`
+    directory. This is critical so the HTML designer can find them.
 
     **PHASE 1: THE COVER IMAGE (Always Required)**
-    Create an evocative, high-concept cover that captures the essence of {topic_content}.
-    This is not a chart—it's a piece of art that sets the tone for everything that follows.
+    If the user did NOT provide a cover image, create an evocative, high-concept
+    cover that captures the essence of {topic_content}. This is not a chart—it's a
+    piece of art that sets the tone for everything that follows.
     
     **Execution:**
     - Tool: Imagen4Tool
@@ -87,17 +103,21 @@ visual_design_task:
 
     **DECISION TREE:**
     
-    1. **Does this finding have rich, visualizable data?**
+    1. **Did the user provide an image for this finding?**
+       → YES: Use the user's image. Do not generate a new one.
+       → NO: Go to question 2.
+
+    2. **Does this finding have rich, visualizable data?**
        → YES: Consider creating a Plotly chart
-       → NO: Go to question 2
-    
-    2. **Does this finding represent a big concept or emotion?**
-       → YES: Consider creating an Imagen4 illustration
        → NO: Go to question 3
     
-    3. **Is the data point itself so striking it needs no visual support?**
+    3. **Does this finding represent a big concept or emotion?**
+       → YES: Consider creating an Imagen4 illustration
+       → NO: Go to question 4
+    
+    4. **Is the data point itself so striking it needs no visual support?**
        → YES: Mark as "No visual created" (let the text be the hero)
-       → NO: Reconsider question 1 or 2 with fresh eyes
+       → NO: Reconsider question 2 or 3 with fresh eyes
 
     **WORKFLOW FOR PLOTLY CHARTS:**
 
@@ -204,6 +224,7 @@ visual_design_task:
     - You might create 5 visuals (data-rich content)
     - You might mix 2 charts + 1 illustration + 2 text-only
     - Quality > Quantity always
+    - Align palettes, textures, and storytelling cues with what {audience_persona} finds compelling
 
     **VERIFICATION STEP:**
     After creating each visual, verify the file was actually created successfully
@@ -240,7 +261,7 @@ content_structuring_task:
   description: >
     You are a Content Architect. Your mission is to synthesize research findings
     and the visual map into a final, structured JSON specification that the HTML
-    designer can directly translate into a beautiful report.
+    designer can directly translate into a beautiful report crafted for **{audience_persona}**.
 
     **YOUR INPUTS:**
     1. {pages_numbers} research findings (from researcher)
@@ -285,6 +306,7 @@ content_structuring_task:
     - Alternate between visual and text-heavy slides
     - Place the most impactful visual at 60-70% through
     - Can end with text-focus for reflective conclusion
+    - Keep tone, call-to-actions, and framing aligned with expectations of {audience_persona}
 
   expected_output: >
     A single, valid JSON object with 'cover_page' and 'slides' keys.
@@ -329,10 +351,21 @@ html_design_task:
     You are an Elite Visual Data Architect from a world-class design agency.
     Your mission is to transform a structured JSON content specification into a
     breathtaking, print-ready, and self-contained HTML file named 'report.html'.
-    The design must be modern, elegant, and thematically inspired by the topic: **{topic_content}**.
+    The design must be modern, elegant, and thematically inspired by the topic: **{topic_content}**,
+    while feeling bespoke for **{audience_persona}** in tone, iconography, and typographic nuance.
 
     **YOUR CANVAS:** A single HTML file. All CSS and any minor JavaScript
     must be embedded within this file.
+
+    **VISUAL SYSTEM (MANDATORY WRAPPER):**
+    - Every chart, diagram, illustration, or photo MUST be wrapped inside `<figure class="visual-block">`.
+    - The media element itself must use `class="visual-media"` and include a `data-type` attribute with one of: `chart`, `diagram`, `illustration`, `photo`.
+    - Provide a `<figcaption>` summarizing the visual's narrative in one sentence.
+    - Use CSS to ensure `.visual-media` elements share a consistent footprint: `max-inline-size: min(92vw, 960px); max-block-size: clamp(280px, 58vh, 640px); aspect-ratio: var(--visual-aspect, 16 / 9); object-fit: contain; border-radius: 24px; background: color-mix(in oklch, var(--accent-color) 10%, transparent); box-shadow: 0 24px 60px oklch(0% 0.02 240 / 0.25);`.
+    - Add state-specific styles:
+        * `.visual-media[data-type="chart"]` → subtle grid overlay + inset border using `background-image: linear-gradient(...)`.
+        * `.visual-media[data-type="diagram"]` → `border: 2px dashed color-mix(...)`.
+        * `.visual-media[data-type="illustration"]` and `.visual-media[data-type="photo"]` → `filter: drop-shadow(...)` for depth.
 
     **MODERN CSS (2025 LIVING STANDARD):**
     -   **OKLCH Colors:** Use `oklch()` for perceptually uniform, vibrant, and human-readable colors.
@@ -347,6 +380,20 @@ html_design_task:
     -   **`visual-focus`**: A full-bleed image background with a `backdrop-filter: blur()` glassmorphism overlay for text.
     -   **`stat-hero`**: A giant, impactful number with a kinetic gradient text effect.
     -   **`text-focus`**: An elegant, editorial layout with beautiful typography.
+
+    **LAYOUT BLUEPRINTS (IMPLEMENT EXACTLY ONCE):**
+    - Define CSS classes `.slide[data-template="data-hero"]`, `.slide[data-template="visual-focus"]`, `.slide[data-template="stat-hero"]`, `.slide[data-template="text-focus"]`.
+    - Each template must declare a CSS Grid or Flex configuration that guarantees the visual block and text can coexist without overlap.
+    - Example requirements:
+        * `data-hero`: 12-column CSS grid, chart spans 7 columns, text spans 5, with `align-items: center` and `gap: clamp(32px, 5vw, 56px)`.
+        * `visual-focus`: full-bleed `.visual-media` as background with `.glass-overlay` nested structure using glassmorphism tokens.
+        * `stat-hero`: vertical stack with `.data-callout` set to `font-size: clamp(48px, 10vw, 104px)` and gradient text using `background-clip: text`.
+        * `text-focus`: centered column constrained to `max-inline-size: 820px`, with drop cap styling for the first paragraph.
+
+    **RESPONSIVE & PRINT TOKENS:**
+    - Compute a custom property `--slide-aspect` from the input aspect ratio `{aspect_ratio}` and use it to scale paddings and visual heights.
+    - Ensure slide padding collapses gracefully on narrow widths (e.g., `padding: clamp(24px, 6vw, 72px)`).
+    - Introduce a media query `@media (max-width: 960px)` to collapse grids into single-column stacks while keeping `.visual-media` centered.
 
     **PRINT PERFECTION (MANDATORY CHECKLIST):**
     -   Include `@page { size: A4 landscape; margin: 0; }`.

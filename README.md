@@ -70,3 +70,21 @@ crewai run
 ```
 
 The process will prompt for human input to approve the research plan and the final HTML design before conversion. The final outputs will be `report.html`, `report.pdf`, and the `images/` directory.
+
+### Visual Best-Practice Explorer
+
+Prefer a cinematic GUI to explore the research agent with live approvals, console feed, and HTML/PDF previews? Launch the PySide6 interface:
+
+```bash
+uv run carousel_ui
+```
+
+or, if you are inside an active environment:
+
+```bash
+python -m carousel.ui
+```
+
+Provide a topic, choose how many insights you need, and the interface will orchestrate the full crew. You’ll review each human-in-the-loop step, watch console output in real time, and preview the generated `report.html` and `report.pdf` directly in the window.
+
+> **Heads up:** the interface uses PySide6. If you have not yet synced dependencies run `uv sync` (or `pip install PySide6` inside your environment) before launching.

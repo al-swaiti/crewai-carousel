@@ -75,7 +75,8 @@ class Carousel():
         return Task(
             config=self.tasks_config['visual_design_task'],
             context=[self.research_task()],
-            agent=self.visual_designer()
+            agent=self.visual_designer(),
+            human_input=True
         )
 
     @task
